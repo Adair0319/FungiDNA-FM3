@@ -1,0 +1,93 @@
+{
+  "block0_direct": {
+    "direct_ari": 0.15350660776048283,
+    "direct_nmi": 0.19619654804987327,
+    "direct_homogeneity": 0.20546429146444517,
+    "direct_completeness": 0.1877287883736079,
+    "direct_v_measure": 0.19619654804987327
+  },
+  "block0_pca": {
+    "pca_ari": 0.15178246488386482,
+    "pca_nmi": 0.19536997678845622,
+    "pca_homogeneity": 0.20479773804552476,
+    "pca_completeness": 0.18677202041091542,
+    "pca_v_measure": 0.19536997678845622
+  },
+  "block1_direct": {
+    "direct_ari": 0.3672487134459119,
+    "direct_nmi": 0.366492315178296,
+    "direct_homogeneity": 0.38794518568600084,
+    "direct_completeness": 0.34728774871628804,
+    "direct_v_measure": 0.3664923151782961
+  },
+  "block1_pca": {
+    "pca_ari": 0.5497423008465431,
+    "pca_nmi": 0.4960961402866822,
+    "pca_homogeneity": 0.522952906766453,
+    "pca_completeness": 0.4718631395965901,
+    "pca_v_measure": 0.4960961402866822
+  },
+  "block2_direct": {
+    "direct_ari": 0.38891349004664233,
+    "direct_nmi": 0.38459296930378906,
+    "direct_homogeneity": 0.4116798119560055,
+    "direct_completeness": 0.36085048765603894,
+    "direct_v_measure": 0.3845929693037891
+  },
+  "block2_pca": {
+    "pca_ari": 0.3358119020043455,
+    "pca_nmi": 0.34198443502326337,
+    "pca_homogeneity": 0.375677934691079,
+    "pca_completeness": 0.31383725258514394,
+    "pca_v_measure": 0.34198443502326337
+  },
+  "block3_direct": {
+    "direct_ari": 0.31041587315861596,
+    "direct_nmi": 0.3461209977650886,
+    "direct_homogeneity": 0.38401167176604256,
+    "direct_completeness": 0.31503617915058213,
+    "direct_v_measure": 0.34612099776508864
+  },
+  "block3_pca": {
+    "pca_ari": 0.3296103228406512,
+    "pca_nmi": 0.34598036768668056,
+    "pca_homogeneity": 0.37228080238390565,
+    "pca_completeness": 0.32315080818834097,
+    "pca_v_measure": 0.3459803676866805
+  },
+  "block4_direct": {
+    "direct_ari": 0.21874142734053584,
+    "direct_nmi": 0.2605266408575989,
+    "direct_homogeneity": 0.2871871333576974,
+    "direct_completeness": 0.23839561936053977,
+    "direct_v_measure": 0.26052664085759897
+  },
+  "block4_pca": {
+    "pca_ari": 0.193365486829186,
+    "pca_nmi": 0.23625194899285273,
+    "pca_homogeneity": 0.2563812625890751,
+    "pca_completeness": 0.2190533678947865,
+    "pca_v_measure": 0.23625194899285276
+  },
+  "block5_direct": {
+    "direct_ari": 0.19495933917467173,
+    "direct_nmi": 0.24748561497439714,
+    "direct_homogeneity": 0.27249557831899285,
+    "direct_completeness": 0.22668060366531895,
+    "direct_v_measure": 0.24748561497439717
+  },
+  "block5_pca": {
+    "pca_ari": 0.20265826200733222,
+    "pca_nmi": 0.2587313504310657,
+    "pca_homogeneity": 0.2866717646120437,
+    "pca_completeness": 0.23575366050062085,
+    "pca_v_measure": 0.2587313504310657
+  },
+  "kmer_baseline": {
+    "kmer_ari": 0.1287,
+    "kmer_nmi": 0.1965,
+    "kmer_homogeneity": 0.1966,
+    "kmer_completeness": 0.1963,
+    "kmer_v_measure": 0.1965
+  }
+}

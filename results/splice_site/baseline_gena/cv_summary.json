@@ -1,0 +1,92 @@
+{
+  "model": "baseline_gena",
+  "n_folds": 5,
+  "metrics": {
+    "macro_f1": {
+      "mean": 0.836288,
+      "std": 0.005281
+    },
+    "mcc": {
+      "mean": 0.756325,
+      "std": 0.007508
+    },
+    "auprc_macro": {
+      "mean": 0.909546,
+      "std": 0.005354
+    },
+    "Donor_F1": {
+      "mean": 0.871864,
+      "std": 0.004939
+    },
+    "Donor_Recall": {
+      "mean": 0.889302,
+      "std": 0.005952
+    },
+    "Donor_Precision": {
+      "mean": 0.855143,
+      "std": 0.007413
+    },
+    "Donor_AUROC": {
+      "mean": 0.966617,
+      "std": 0.002361
+    },
+    "Donor_AUPRC": {
+      "mean": 0.942914,
+      "std": 0.004706
+    },
+    "Acceptor_F1": {
+      "mean": 0.858131,
+      "std": 0.004299
+    },
+    "Acceptor_Recall": {
+      "mean": 0.868332,
+      "std": 0.007444
+    },
+    "Acceptor_Precision": {
+      "mean": 0.848285,
+      "std": 0.009129
+    },
+    "Acceptor_AUROC": {
+      "mean": 0.961384,
+      "std": 0.002189
+    },
+    "Acceptor_AUPRC": {
+      "mean": 0.932613,
+      "std": 0.004521
+    },
+    "Non-Site_F1": {
+      "mean": 0.778868,
+      "std": 0.007788
+    },
+    "Non-Site_Recall": {
+      "mean": 0.754103,
+      "std": 0.016323
+    },
+    "Non-Site_Precision": {
+      "mean": 0.805641,
+      "std": 0.008217
+    },
+    "Non-Site_AUROC": {
+      "mean": 0.9265,
+      "std": 0.004251
+    },
+    "Non-Site_AUPRC": {
+      "mean": 0.853112,
+      "std": 0.007453
+    },
+    "best_val_f1": {
+      "mean": 0.836847,
+      "std": 0.005911
+    },
+    "best_epoch": {
+      "mean": 5.8,
+      "std": 0.748331
+    },
+    "auroc_macro": {
+      "mean": 0.951501,
+      "std": 0.002891
+    }
+  },
+  "best_fold": 3,
+  "best_fold_auroc": 0.956947
+}

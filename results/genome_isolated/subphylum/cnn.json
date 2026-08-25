@@ -1,0 +1,63 @@
+{
+  "model": "cnn",
+  "dataset": "subphylum",
+  "macro_f1": 0.6132421907532062,
+  "mcc": 0.7952652133271544,
+  "per_class": {
+    "Agaricomycotina": {
+      "precision": 0.8323841698841699,
+      "recall": 0.8955758645757608,
+      "f1": 0.8628245535044274
+    },
+    "Entomophthoromycotina": {
+      "precision": 0.07692307692307693,
+      "recall": 0.03048780487804878,
+      "f1": 0.043668122270742356
+    },
+    "Kickxellomycotina": {
+      "precision": 0.8409893992932862,
+      "recall": 0.8717948717948718,
+      "f1": 0.8561151079136691
+    },
+    "Mortierellomycotina": {
+      "precision": 0.7746005046257359,
+      "recall": 0.7932816537467701,
+      "f1": 0.7838297872340425
+    },
+    "Mucoromycotina": {
+      "precision": 0.8605182926829268,
+      "recall": 0.9692651098901099,
+      "f1": 0.9116602067183462
+    },
+    "Pezizomycotina": {
+      "precision": 0.923724043958648,
+      "recall": 0.899477919755401,
+      "f1": 0.9114397615011399
+    },
+    "Pucciniomycotina": {
+      "precision": 0.509789156626506,
+      "recall": 0.339859437751004,
+      "f1": 0.4078313253012048
+    },
+    "Saccharomycotina": {
+      "precision": 0.6360485268630849,
+      "recall": 0.5654853620955316,
+      "f1": 0.598694942903752
+    },
+    "Taphrinomycotina": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Ustilaginomycotina": {
+      "precision": 0.7770880361173815,
+      "recall": 0.6018356643356644,
+      "f1": 0.6783251231527093
+    },
+    "Zoopagomycotina": {
+      "precision": 0.6602564102564102,
+      "recall": 0.7253521126760564,
+      "f1": 0.6912751677852349
+    }
+  }
+}

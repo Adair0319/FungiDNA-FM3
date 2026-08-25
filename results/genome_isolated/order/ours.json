@@ -1,0 +1,498 @@
+{
+  "model": "ours",
+  "dataset": "order",
+  "macro_f1": 0.21812931980941286,
+  "mcc": 0.49736613908111527,
+  "per_class": {
+    "Agaricales": {
+      "precision": 0.564380139481628,
+      "recall": 0.7116419477621735,
+      "f1": 0.6295135260652502
+    },
+    "Agaricostilbales": {
+      "precision": 0.024390243902439025,
+      "recall": 0.001763668430335097,
+      "f1": 0.003289473684210526
+    },
+    "Atheliales": {
+      "precision": 0.5419354838709678,
+      "recall": 0.26006191950464397,
+      "f1": 0.3514644351464435
+    },
+    "Atractiellales": {
+      "precision": 0.8066666666666666,
+      "recall": 0.24543610547667344,
+      "f1": 0.37636080870917576
+    },
+    "Auriculariales": {
+      "precision": 0.9426229508196722,
+      "recall": 0.24945770065075923,
+      "f1": 0.39451114922813035
+    },
+    "Basidiobolales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Blastocladiales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Boletales": {
+      "precision": 0.45874587458745875,
+      "recall": 0.1279926335174954,
+      "f1": 0.20014398848092152
+    },
+    "Boliniales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Botryosphaeriales": {
+      "precision": 0.8128428525330752,
+      "recall": 0.7485884101040119,
+      "f1": 0.7793935643564357
+    },
+    "Cantharellales": {
+      "precision": 0.4354561101549053,
+      "recall": 0.40544871794871795,
+      "f1": 0.4199170124481328
+    },
+    "Capnodiales": {
+      "precision": 0.008425720620842573,
+      "recall": 0.036053130929791274,
+      "f1": 0.013659237958303379
+    },
+    "Ceraceosorales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Chaetosphaeriales": {
+      "precision": 0.5668103448275862,
+      "recall": 0.5680345572354212,
+      "f1": 0.5674217907227616
+    },
+    "Chaetothyriales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Chytridiales": {
+      "precision": 0.7611202635914333,
+      "recall": 0.9333333333333333,
+      "f1": 0.838475499092559
+    },
+    "Cladochytriales": {
+      "precision": 0.08108108108108109,
+      "recall": 0.009316770186335404,
+      "f1": 0.016713091922005572
+    },
+    "Classiculales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Coniochaetales": {
+      "precision": 0.29064039408866993,
+      "recall": 0.21493624772313297,
+      "f1": 0.24712041884816754
+    },
+    "Corticiales": {
+      "precision": 0.031746031746031744,
+      "recall": 0.001943634596695821,
+      "f1": 0.003663003663003663
+    },
+    "Cystobasidiales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Cystofilobasidiales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Dacrymycetales": {
+      "precision": 0.17027863777089783,
+      "recall": 0.0954861111111111,
+      "f1": 0.12235817575083426
+    },
+    "Diaporthales": {
+      "precision": 0.42246642246642246,
+      "recall": 0.2902684563758389,
+      "f1": 0.3441074092491298
+    },
+    "Dimargaritales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Doassansiales": {
+      "precision": 0.2857142857142857,
+      "recall": 0.0035650623885918,
+      "f1": 0.007042253521126761
+    },
+    "Dothideales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Endogonales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Entomophthorales": {
+      "precision": 0.7666666666666667,
+      "recall": 0.286783042394015,
+      "f1": 0.41742286751361163
+    },
+    "Entylomatales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Erythrobasidiales": {
+      "precision": 0.9939759036144579,
+      "recall": 0.8375634517766497,
+      "f1": 0.9090909090909091
+    },
+    "Eurotiales": {
+      "precision": 0.3427230046948357,
+      "recall": 0.24978614200171087,
+      "f1": 0.28896585848589806
+    },
+    "Exobasidiales": {
+      "precision": 0.07807807807807808,
+      "recall": 0.08996539792387544,
+      "f1": 0.08360128617363344
+    },
+    "Filobasidiales": {
+      "precision": 0.588,
+      "recall": 0.7603448275862069,
+      "f1": 0.6631578947368421
+    },
+    "Geastrales": {
+      "precision": 0.125,
+      "recall": 0.024657534246575342,
+      "f1": 0.041189931350114416
+    },
+    "Gloeophyllales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Glomerellales": {
+      "precision": 0.15187376725838264,
+      "recall": 0.14528301886792452,
+      "f1": 0.1485053037608486
+    },
+    "Gomphales": {
+      "precision": 0.16666666666666666,
+      "recall": 0.004739336492890996,
+      "f1": 0.009216589861751152
+    },
+    "Helotiales": {
+      "precision": 0.42649524874231415,
+      "recall": 0.6974405850091407,
+      "f1": 0.5293097467915366
+    },
+    "Heterogastridiales": {
+      "precision": 0.8119349005424955,
+      "recall": 0.8803921568627451,
+      "f1": 0.8447789275634995
+    },
+    "Hymenochaetales": {
+      "precision": 0.4316546762589928,
+      "recall": 0.25396825396825395,
+      "f1": 0.31978680879413723
+    },
+    "Hypocreales": {
+      "precision": 0.317489539748954,
+      "recall": 0.5679640718562874,
+      "f1": 0.4073000536768653
+    },
+    "Hysterangiales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Hysteriales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Jahnulales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Kickxellales": {
+      "precision": 0.946969696969697,
+      "recall": 0.8086876155268022,
+      "f1": 0.872382851445663
+    },
+    "Lecanorales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Leotiales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Leucosporidiales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Lulworthiales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Melanosporales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Microascales": {
+      "precision": 0.04552845528455285,
+      "recall": 0.04745762711864407,
+      "f1": 0.046473029045643155
+    },
+    "Microstromatales": {
+      "precision": 0.5941080196399345,
+      "recall": 0.6142131979695431,
+      "f1": 0.6039933444259568
+    },
+    "Microthyriales": {
+      "precision": 0.07885554780181438,
+      "recall": 0.22645290581162325,
+      "f1": 0.11697722567287784
+    },
+    "Moniliellales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Monoblepharidales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Mortierellales": {
+      "precision": 0.5823019801980198,
+      "recall": 0.8704902867715079,
+      "f1": 0.6978123841305154
+    },
+    "Mucorales": {
+      "precision": 0.8799685163321527,
+      "recall": 0.8628207601775034,
+      "f1": 0.8713102776424744
+    },
+    "Mycosphaerellales": {
+      "precision": 0.4144144144144144,
+      "recall": 0.18253968253968253,
+      "f1": 0.2534435261707989
+    },
+    "Myriangiales": {
+      "precision": 0.3048016701461378,
+      "recall": 0.24787775891341257,
+      "f1": 0.27340823970037453
+    },
+    "Mytilinidiales": {
+      "precision": 0.8053097345132744,
+      "recall": 0.16455696202531644,
+      "f1": 0.2732732732732733
+    },
+    "Onygenales": {
+      "precision": 0.5046728971962616,
+      "recall": 0.4294234592445328,
+      "f1": 0.4640171858216971
+    },
+    "Ophiostomatales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Ostropales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Patellariales": {
+      "precision": 0.005905511811023622,
+      "recall": 0.005136986301369863,
+      "f1": 0.005494505494505495
+    },
+    "Pezizales": {
+      "precision": 0.9487883683360259,
+      "recall": 0.9442122186495177,
+      "f1": 0.9464947622884771
+    },
+    "Phaeomoniellales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Phallales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Pleosporales": {
+      "precision": 0.6326397919375812,
+      "recall": 0.6150442477876106,
+      "f1": 0.6237179487179487
+    },
+    "Polychytriales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Polyporales": {
+      "precision": 0.5641025641025641,
+      "recall": 0.2985386221294363,
+      "f1": 0.39044368600682594
+    },
+    "Pucciniales": {
+      "precision": 0.5,
+      "recall": 0.4461538461538462,
+      "f1": 0.4715447154471545
+    },
+    "Pyrenulales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Rhizophydiales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Rhytismatales": {
+      "precision": 0.011152416356877323,
+      "recall": 0.0072992700729927005,
+      "f1": 0.008823529411764706
+    },
+    "Russulales": {
+      "precision": 0.5005847953216375,
+      "recall": 0.4686131386861314,
+      "f1": 0.484071630537229
+    },
+    "Saccharomycetales": {
+      "precision": 0.49056603773584906,
+      "recall": 0.49347568208778175,
+      "f1": 0.4920165582495565
+    },
+    "Septobasidiales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Sordariales": {
+      "precision": 0.6325259515570935,
+      "recall": 0.6169422882213972,
+      "f1": 0.6246369383222279
+    },
+    "Spiculogloeales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Spizellomycetales": {
+      "precision": 0.24213836477987422,
+      "recall": 0.13924050632911392,
+      "f1": 0.17680826636050517
+    },
+    "Sporidiobolales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Taphrinales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Thelebolales": {
+      "precision": 0.84,
+      "recall": 0.07130730050933787,
+      "f1": 0.13145539906103287
+    },
+    "Thelephorales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Togniniales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Torpedosporales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Trechisporales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Tremellales": {
+      "precision": 0.6343612334801763,
+      "recall": 0.38605898123324395,
+      "f1": 0.48
+    },
+    "Trichosphaeriales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Tritirachiales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Urocystidiales": {
+      "precision": 0.04608294930875576,
+      "recall": 0.017006802721088437,
+      "f1": 0.024844720496894408
+    },
+    "Ustilaginales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Venturiales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Violaceomycetales": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Xylariales": {
+      "precision": 0.3070776255707763,
+      "recall": 0.4574829931972789,
+      "f1": 0.3674863387978142
+    },
+    "Xylonales": {
+      "precision": 0.6954643628509719,
+      "recall": 0.5466893039049237,
+      "f1": 0.6121673003802282
+    },
+    "Zoopagales": {
+      "precision": 0.8891352549889135,
+      "recall": 0.8477801268498943,
+      "f1": 0.8679653679653679
+    }
+  }
+}

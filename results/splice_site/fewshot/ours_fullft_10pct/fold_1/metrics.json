@@ -1,0 +1,41 @@
+{
+  "macro_f1": 0.7889545765821699,
+  "mcc": 0.683467177281314,
+  "confusion_matrix": [
+    [
+      45802,
+      4219,
+      8487
+    ],
+    [
+      4561,
+      45362,
+      8386
+    ],
+    [
+      5749,
+      5666,
+      47014
+    ]
+  ],
+  "auroc_macro": NaN,
+  "auprc_macro": 0.8480573229687652,
+  "Donor_F1": 0.7991973477578084,
+  "Donor_Recall": 0.7828331168387229,
+  "Donor_Precision": 0.8162603364699174,
+  "Donor_AUROC": 0.9171294481249601,
+  "Donor_AUPRC": 0.8717885017010699,
+  "Acceptor_F1": 0.7989362076860755,
+  "Acceptor_Recall": 0.7779588056732237,
+  "Acceptor_Precision": 0.8210762575343458,
+  "Acceptor_AUROC": 0.9174948595537566,
+  "Acceptor_AUPRC": 0.86801499704387,
+  "Non-Site_F1": 0.768730174302626,
+  "Non-Site_Recall": 0.8046346848311626,
+  "Non-Site_Precision": 0.7358930611861568,
+  "Non-Site_AUROC": 0.8988086346622728,
+  "Non-Site_AUPRC": 0.8043684701613557,
+  "best_val_f1": 0.7849710445548995,
+  "best_epoch": 29,
+  "stopped_early": false
+}

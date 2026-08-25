@@ -1,0 +1,138 @@
+{
+  "model": "ours",
+  "dataset": "class",
+  "macro_f1": 0.3461019215260768,
+  "mcc": 0.7094155387846426,
+  "per_class": {
+    "Agaricomycetes": {
+      "precision": 0.9599703025428448,
+      "recall": 0.8741900952166319,
+      "f1": 0.9150743099787686
+    },
+    "Agaricostilbomycetes": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Atractiellomycetes": {
+      "precision": 0.6428571428571429,
+      "recall": 0.036511156186612576,
+      "f1": 0.0690978886756238
+    },
+    "Blastocladiomycetes": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Chytridiomycetes": {
+      "precision": 0.35508961785593507,
+      "recall": 0.9210526315789473,
+      "f1": 0.5125701732975347
+    },
+    "Classiculomycetes": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Cystobasidiomycetes": {
+      "precision": 0.9829787234042553,
+      "recall": 0.787052810902896,
+      "f1": 0.8741721854304636
+    },
+    "Dacrymycetes": {
+      "precision": 0.22240896358543416,
+      "recall": 0.6940559440559441,
+      "f1": 0.336868901145524
+    },
+    "Dothideomycetes": {
+      "precision": 0.7124950145290867,
+      "recall": 0.9222656538092779,
+      "f1": 0.803921568627451
+    },
+    "Eurotiomycetes": {
+      "precision": 0.5588235294117647,
+      "recall": 0.0976027397260274,
+      "f1": 0.1661807580174927
+    },
+    "Exobasidiomycetes": {
+      "precision": 0.315343099460293,
+      "recall": 0.35534317984361424,
+      "f1": 0.3341503267973856
+    },
+    "Lecanoromycetes": {
+      "precision": 0.006872852233676976,
+      "recall": 0.0033783783783783786,
+      "f1": 0.004530011325028313
+    },
+    "Leotiomycetes": {
+      "precision": 0.49909584086799275,
+      "recall": 0.3858790632645928,
+      "f1": 0.43524541691306917
+    },
+    "Microbotryomycetes": {
+      "precision": 0.30549199084668194,
+      "recall": 0.492619926199262,
+      "f1": 0.3771186440677966
+    },
+    "Moniliellomycetes": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Monoblepharidomycetes": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Mucoromycetes": {
+      "precision": 0.8543689320388349,
+      "recall": 0.25142857142857145,
+      "f1": 0.38852097130242824
+    },
+    "Pezizomycetes": {
+      "precision": 0.8840905164968043,
+      "recall": 0.982153137593552,
+      "f1": 0.9305454545454546
+    },
+    "Pucciniomycetes": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Saccharomycetes": {
+      "precision": 0.7697368421052632,
+      "recall": 0.5763546798029556,
+      "f1": 0.6591549295774648
+    },
+    "Sordariomycetes": {
+      "precision": 0.8924069779167086,
+      "recall": 0.7855494407953133,
+      "f1": 0.8355756974932729
+    },
+    "Taphrinomycetes": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Tremellomycetes": {
+      "precision": 0.8320512820512821,
+      "recall": 0.39167169583584793,
+      "f1": 0.5326220763233483
+    },
+    "Tritirachiomycetes": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Ustilaginomycetes": {
+      "precision": 0.25336927223719674,
+      "recall": 0.47959183673469385,
+      "f1": 0.3315696649029982
+    },
+    "Xylonomycetes": {
+      "precision": 0.707936507936508,
+      "recall": 0.3766891891891892,
+      "f1": 0.49173098125689085
+    }
+  }
+}
