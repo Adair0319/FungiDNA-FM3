@@ -1,8 +1,10 @@
 # ── Data and model weights (never commit; see README for how to obtain) ──
-data/
-checkpoints/
-baselines/models/
-dna_foundation_models/
+# Leading slash anchors these to the repo root — an unanchored `data/` would
+# also swallow the fungidna/data/ package.
+/data/
+/checkpoints/
+/baselines/models/
+/dna_foundation_models/
 *.pt
 *.pth
 *.bin
@@ -26,7 +28,7 @@ _temp*/
 
 # ── Experiment tracking and logs ──
 wandb/
-logs/
+/logs/
 *.log
 *.out
 nohup.out
