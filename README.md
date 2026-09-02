@@ -101,9 +101,8 @@ Please read this before opening an issue about something not running.
   Those models are not paper baselines and have been removed from the CLI
   choices; the surrounding code is left as it was when the reported numbers
   were produced.
-- **Scope.** Only the pretraining and the four downstream evaluations reported
-  in the paper are included. Unpublished exploratory work is not in this
-  repository.
+- **Scope.** Only the pretraining and the downstream evaluations reported in the
+  paper are included. Unpublished exploratory work is not in this repository.
 
 ## License
 
