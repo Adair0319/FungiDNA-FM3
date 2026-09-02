@@ -38,3 +38,20 @@ class DualBinaryHead(nn.Module):
         return self.donor_head(x), self.acceptor_head(x)
 
 
+class MeanPoolHead(nn.Module):
+    """Mean-pool → MLP → regression output (BGC boundary distance)."""
+    def __init__(self, hidden_size: int, num_classes: int, hidden_dim: int = 128, dropout: float = 0.1):
+        super().__init__()
+        self.norm = nn.LayerNorm(hidden_size)
+        self.fc1 = nn.Linear(hidden_size, hidden_dim)
+        self.act = nn.GELU()
+        self.dropout = nn.Dropout(dropout)
+        self.fc2 = nn.Linear(hidden_dim, num_classes)
+
+    def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
+        pooled = hidden_states[:, 1:, :].mean(dim=1)
+        x = self.norm(pooled)
+        x = self.dropout(self.act(self.fc1(x)))
+        return self.fc2(x)
+
+

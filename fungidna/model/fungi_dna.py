@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from fungidna.model.config import FungiDNAConfig
 from fungidna.model.striped_mamba import StripedMambaBackbone
-from fungidna.model.heads import ClassificationHead, DualBinaryHead
+from fungidna.model.heads import ClassificationHead, DualBinaryHead, MeanPoolHead
 
 
 def mean_pool(hidden: torch.Tensor, attention_mask: torch.Tensor = None) -> torch.Tensor:
@@ -265,5 +265,18 @@ class FungiDNAForSpliceSite(nn.Module):
         self.head = DualBinaryHead(config.hidden_size)
 
     def forward(self, input_ids: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        hidden = self.backbone(input_ids, token_type=0)
+        return self.head(hidden)
+
+
+class FungiDNAForBGCBoundary(nn.Module):
+    """Downstream: BGC boundary distance regression (2 outputs: left/right distance)."""
+    def __init__(self, config: FungiDNAConfig, num_outputs: int = 2):
+        super().__init__()
+        self.config = config
+        self.backbone = StripedMambaBackbone(config)
+        self.head = MeanPoolHead(config.hidden_size, num_outputs)
+
+    def forward(self, input_ids: torch.Tensor) -> torch.Tensor:
         hidden = self.backbone(input_ids, token_type=0)
         return self.head(hidden)
