@@ -29,6 +29,7 @@ _TASK_ALIASES = {
     # splice site
     "splice_site": "splice_site",
     "splice site": "splice_site",
+    "splice sites": "splice_site",
     "splice-site": "splice_site",
     "splice": "splice_site",
     # bgc boundary

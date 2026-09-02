@@ -15,6 +15,7 @@ class TestNormalizeTask(unittest.TestCase):
         self.assertEqual(normalize_task("coding potential"), "coding_potential")
         self.assertEqual(normalize_task("coding-potential"), "coding_potential")
         self.assertEqual(normalize_task("splice site"), "splice_site")
+        self.assertEqual(normalize_task("splice sites"), "splice_site")
         self.assertEqual(normalize_task("splice-site"), "splice_site")
         self.assertEqual(normalize_task("BGC boundary"), "bgc_boundary")
         self.assertEqual(normalize_task("bgc"), "bgc_boundary")

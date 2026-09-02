@@ -17,12 +17,7 @@ def parse_prompt(text, llm_extractor=None):
 
     m = _ALIAS_RE.search(text)
     if m:
-        raw = m.group(0)
-        task = normalize_task(raw)
-        if task is None and raw.lower().endswith("s"):
-            # tasks.py uses singular keys for multi-word aliases ("splice site");
-            # retry a captured plural phrase ("splice sites") minus the trailing "s".
-            task = normalize_task(raw[:-1])
+        task = normalize_task(m.group(0))
 
     m = _PATH_RE.search(text)
     if m:
