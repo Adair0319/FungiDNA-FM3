@@ -1,0 +1,1 @@
+"""FungiDNA guarded invocation package."""
