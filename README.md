@@ -110,6 +110,34 @@ Please read this before opening an issue about something not running.
 [MIT](LICENSE). Note that the pretrained baselines downloaded by
 `baselines/download.py` carry their own licenses — GENA-LM is CC-BY-NC-SA 4.0.
 
+## Invocation
+
+FungiDNA-FM exposes two equivalent entry points that share one validation gate.
+
+**Embedded API:**
+
+```python
+from fungidna.invoke import run_task
+report = run_task(file_path="/path/test.fasta", task="splice_site")
+print(report.to_json())
+```
+
+**Prompt-driven terminal:**
+
+```bash
+python -m fungidna "Please predict the splice sites using /path/test.fasta"
+```
+
+Supported tasks: `representation`, `taxonomy`, `coding_potential`,
+`splice_site`, `bgc_boundary` (aliases accepted, e.g. "splice site",
+"taxonomic classification").
+
+Weights are loaded per task. Point each task at its checkpoint via
+`~/.config/fungidna/weights.yaml` (a `task: /path/to/checkpoint.pt` mapping)
+or the `FUNGIDNA_<TASK>_WEIGHTS` environment variable (e.g.
+`FUNGIDNA_TAXONOMY_WEIGHTS`). Until weights are registered, requests that pass
+validation raise `WeightsNotFoundError`.
+
 ## Citation
 
 Citation details will be added once the paper is published.
