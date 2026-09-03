@@ -4,7 +4,7 @@ import torch
 from ..report import Report
 from ..request import Task
 from ..sequence import read_sequences
-from .base import TaskHandler, WeightLoader
+from .base import TaskHandler, WeightLoader, load_checkpoint
 
 
 class BGCBoundaryHandler(TaskHandler):
@@ -14,18 +14,16 @@ class BGCBoundaryHandler(TaskHandler):
         self.loader = loader or WeightLoader()
 
     def run(self, request):
-        ckpt = self.loader.resolve(self.task.value)  # raises WeightsNotFoundError if absent
+        ckpt = self.loader.resolve(self.task.value)
+        tokenizer_path = self.loader.resolve_tokenizer()
+
         from fungidna.model.config import FungiDNAConfig
         from fungidna.model.fungi_dna import FungiDNAForBGCBoundary
         from fungidna.data.tokenizer import DualTokenizer
 
-        bpe_path = ckpt.parent / "tokenizer.model"
-        tok = DualTokenizer(str(bpe_path))
+        tok = DualTokenizer(str(tokenizer_path))
         model = FungiDNAForBGCBoundary(FungiDNAConfig(), num_outputs=2)
-        sd = torch.load(ckpt, map_location="cpu", weights_only=True)
-        if isinstance(sd, dict) and "model" in sd and isinstance(sd["model"], dict):
-            sd = sd["model"]
-        model.load_state_dict(sd, strict=False)
+        load_checkpoint(model, ckpt, unwrap="model")
         model.eval()
 
         boundaries = {}

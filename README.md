@@ -132,10 +132,13 @@ Supported tasks: `representation`, `taxonomy`, `coding_potential`,
 "taxonomic classification").
 
 Weights are loaded per task. Point each task at its checkpoint via
-`~/.config/fungidna/weights.yaml` (a `task: /path/to/checkpoint.pt` mapping)
-or the `FUNGIDNA_<TASK>_WEIGHTS` environment variable (e.g.
-`FUNGIDNA_TAXONOMY_WEIGHTS`). Until weights are registered, requests that pass
-validation raise `WeightsNotFoundError`.
+`~/.config/fungidna/weights.yaml` (a `task: /path/to/checkpoint.pt` mapping) or
+the `FUNGIDNA_<TASK>_WEIGHTS` environment variable. The shared pretrained
+backbone and SentencePiece tokenizer are resolved under the `backbone` and
+`tokenizer` keys (env: `FUNGIDNA_BACKBONE_WEIGHTS` / `FUNGIDNA_TOKENIZER_WEIGHTS`).
+See [`docs/weights_manifest.md`](docs/weights_manifest.md) for the exact files
+to publish. Until weights are registered, requests that pass validation raise
+`WeightsNotFoundError`.
 
 ## Citation
 
