@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 from .request import StructuredRequest, task_from_string
-from .sequence import SUPPORTED_EXTENSIONS, first_record_valid
+from .sequence import SUPPORTED_EXTENSIONS, first_record_wellformed
 from .tasks import normalize_task
 
 
@@ -36,9 +36,9 @@ def validate(task_raw, file_path_raw):
             "UNSUPPORTED_FORMAT",
             f"unsupported extension {path.suffix!r}; supported: .fa .fasta .fq .fastq (uncompressed)",
         )
-    if not first_record_valid(path):
+    if not first_record_wellformed(path):
         raise ValidationError(
             "INVALID_SEQUENCE_FORMAT",
-            "first record does not look like FASTA ('>') or FASTQ ('@')",
+            "first record is not a well-formed FASTA ('>') or FASTQ ('@') record",
         )
     return StructuredRequest(task=task_from_string(task_name), file_path=path.resolve())

@@ -18,6 +18,36 @@ def first_record_valid(path):
     return c in (">", "@")
 
 
+def first_record_wellformed(path):
+    """Try to parse the first record; True only if it is structurally valid.
+
+    This is stronger than :func:`first_record_valid` (which only checks the
+    first character): it actually reads the first record and confirms a FASTA
+    record has a header plus at least one non-empty sequence line, and a FASTQ
+    record has a header, a non-empty sequence, and a ``+`` line.
+    """
+    with open(path, "r", encoding="utf-8", errors="replace") as fh:
+        first_line = fh.readline()
+    if first_line.startswith(">"):
+        seq = []
+        with open(path, "r", encoding="utf-8", errors="replace") as fh:
+            next(fh, None)  # skip the header line
+            for line in fh:
+                s = line.strip()
+                if s.startswith(">"):  # next record — stop at the first record
+                    break
+                if s:
+                    seq.append(s)
+        return bool(seq)
+    if first_line.startswith("@"):
+        with open(path, "r", encoding="utf-8", errors="replace") as fh:
+            _header = fh.readline()
+            seq = fh.readline()
+            plus = fh.readline()
+        return bool(seq.strip()) and plus.startswith("+")
+    return False
+
+
 def read_sequences(path):
     """Return [(header, sequence), ...] for a FASTA/FASTQ file."""
     path = Path(path)

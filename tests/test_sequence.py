@@ -2,7 +2,12 @@ import unittest
 import tempfile
 from pathlib import Path
 
-from fungidna.invoke.sequence import read_sequences, first_record_valid, SUPPORTED_EXTENSIONS
+from fungidna.invoke.sequence import (
+    read_sequences,
+    first_record_valid,
+    first_record_wellformed,
+    SUPPORTED_EXTENSIONS,
+)
 
 
 def _write(content, suffix=".fasta"):
@@ -37,3 +42,20 @@ class TestReadSequences(unittest.TestCase):
 
     def test_supported_extensions(self):
         self.assertEqual(SUPPORTED_EXTENSIONS, {".fa", ".fasta", ".fq", ".fastq"})
+
+    def test_first_record_wellformed_fasta(self):
+        self.assertTrue(first_record_wellformed(_write(">x\nACGT\n")))
+        # header with no sequence is not a well-formed record
+        self.assertFalse(first_record_wellformed(_write(">x\n")))
+        # header-only followed by a second header is still empty
+        self.assertFalse(first_record_wellformed(_write(">x\n>y\nACGT\n")))
+
+    def test_first_record_wellformed_fastq(self):
+        self.assertTrue(first_record_wellformed(_write("@x\nACGT\n+\nIIII\n", suffix=".fastq")))
+        # missing '+' line
+        self.assertFalse(first_record_wellformed(_write("@x\nACGT\n", suffix=".fastq")))
+        # empty sequence
+        self.assertFalse(first_record_wellformed(_write("@x\n\n+\nIIII\n", suffix=".fastq")))
+
+    def test_first_record_wellformed_non_sequence(self):
+        self.assertFalse(first_record_wellformed(_write("junk\n")))
