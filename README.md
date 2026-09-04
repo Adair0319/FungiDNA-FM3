@@ -1,12 +1,15 @@
 # FungiDNA-FM
 
-Code accompanying the paper **“FungiDNA: a genomic foundation model pretrained
-on diverse fungal whole genomes.”**
+A genomic foundation model pretrained on diverse fungal whole genomes.
 
-This repository is a *reproducibility companion*: every script here maps onto a
-specific section, figure or supplementary table of the paper. It is not a
-general-purpose library — see [Known limitations](#known-limitations) before
-you try to run anything.
+FungiDNA-FM (113 M parameters) is a hybrid **Mamba2 + self-attention** backbone
+trained on 39.48 Gb from 734 fungal genomes spanning six phyla. It produces
+representations that transfer to five downstream tasks: representation
+clustering, taxonomic classification, coding-potential prediction, splice-site
+classification, and biosynthetic-gene-cluster (BGC) boundary regression.
+
+Companion repository for the paper *"FungiDNA: a genomic foundation model
+pretrained on diverse fungal whole genomes."*
 
 ## Model at a glance
 
@@ -21,7 +24,101 @@ you try to run anything.
 | Pooling | mean over non-padding positions (not `[CLS]`) |
 | Pretraining corpus | 734 fungal genomes, **39.48 Gb**, six phyla (JGI MycoCosm *1000 Fungal Genomes*) |
 | Pretraining | Phase 1 MLM (1,024 / 2,048 / 4,096 bp) → Phase 2 MLM + supervised contrastive (8,192 bp) |
-| Compute | 8 × NVIDIA L20 (46 GB), Python 3.10, PyTorch 2.5.1, CUDA 12.1 |
+
+## Model weights
+
+The pretrained backbone and downstream-task checkpoints are hosted on the
+Hugging Face Hub:
+
+**https://huggingface.co/Adair0319/FungiDNA-FM**
+
+The repository contains:
+
+```
+Adair0319/FungiDNA-FM
+├── backbone_final.pt                    # pretrained backbone
+├── tokenizer/{bpe_fungi.model, .vocab}  # SentencePiece tokenizer
+├── coding_potential/best_model.pt
+├── splice_site/best_model.pt
+├── taxonomy/{phylum,subphylum,class,order,family}/mlp_best.pt
+└── bgc_boundary/best_model.pt
+```
+
+(If your Hugging Face username differs, adjust the URL accordingly. See
+[`docs/weights_manifest.md`](docs/weights_manifest.md) for the exact files and
+their sizes.)
+
+Download the files (e.g. via `git lfs` / `huggingface-cli download` / the Hub
+web UI) to a local directory, then tell the handlers where they live with a
+`~/.config/fungidna/weights.yaml` config:
+
+```bash
+mkdir -p ~/.config/fungidna
+cp configs/weights.example.yaml ~/.config/fungidna/weights.yaml
+# edit the paths to point at your downloaded files
+```
+
+```yaml
+# ~/.config/fungidna/weights.yaml
+backbone: /path/to/backbone_final.pt
+tokenizer: /path/to/tokenizer/bpe_fungi.model
+coding_potential: /path/to/coding_potential/best_model.pt
+splice_site: /path/to/splice_site/best_model.pt
+taxonomy: /path/to/taxonomy/phylum/mlp_best.pt
+bgc_boundary: /path/to/bgc_boundary/best_model.pt
+```
+
+The same paths can be given via environment variables
+(`FUNGIDNA_BACKBONE_WEIGHTS`, `FUNGIDNA_TOKENIZER_WEIGHTS`, and
+`FUNGIDNA_<TASK>_WEIGHTS`).
+
+## Installation
+
+```bash
+conda env create -f environment.yml
+conda activate fungidna
+```
+
+`flash-attn` and `mamba-ssm` need a CUDA toolchain matching your PyTorch build;
+if the conda solve is slow, install the pinned pip wheels from
+`requirements.txt` into a bare Python 3.10 + PyTorch 2.5.1 + CUDA 12.1 env
+instead.
+
+## Quick start
+
+FungiDNA-FM exposes two equivalent entry points that share one validation gate.
+
+**Embedded API:**
+
+```python
+from fungidna.invoke import run_task
+
+report = run_task(file_path="/path/test.fasta", task="coding_potential")
+print(report.to_json())
+```
+
+**Prompt-driven terminal:**
+
+```bash
+python -m fungidna "Please predict the splice sites using /path/test.fasta"
+```
+
+Requests are validated before execution: unsupported tasks, missing files, and
+malformed FASTA/FASTQ inputs return a structured error and never reach the
+model.
+
+## Supported tasks
+
+| Task | Canonical name | Description |
+|---|---|---|
+| Representation | `representation` | 768-d mean-pooled embeddings per sequence |
+| Taxonomic classification | `taxonomy` | phylum label per sequence (five-rank heads available) |
+| Coding potential | `coding_potential` | coding vs non-coding probability per sequence |
+| Splice site | `splice_site` | donor / acceptor / non-site per candidate motif |
+| BGC boundary | `bgc_boundary` | left/right boundary distance in bp |
+
+Aliases are accepted (e.g. `"splice site"`, `"taxonomic classification"`,
+`"embeddings"`) and normalised to the canonical names above.
 
 ## Paper → code
 
@@ -38,36 +135,20 @@ you try to run anything.
 | Methods 2.9 · **Fig 5** · Table S4 | [`experiments/04_splice_site/`](experiments/04_splice_site/) | Donor / acceptor / non-site, 401-bp windows, GroupKFold |
 | Methods 2.10 — environment | [`environment.yml`](environment.yml), [`requirements.txt`](requirements.txt) | |
 | Figures 2–5 | [`figures/`](figures/) | Report and figure generators |
-| Tables S1–S4 | [`results/`](results/) | Collected metric files for all four experiments |
-
-Each `experiments/NN_*/` directory has its own README naming the figure and
-table it produces, the dataset it needs, and the commands to run.
+| Tables S1–S4 | [`results/`](results/) | Collected metric files for all experiments |
 
 ## Repository layout
 
 ```
-fungidna/          core library — model, data, training
+fungidna/          core library — model, data, training, and the invoke workflow
 data_prep/         raw JGI data → per-task datasets
 experiments/       one directory per paper experiment
 baselines/         baseline model definitions and download helper
-configs/           pretraining configs
+configs/           pretraining configs and the weights config template
 results/           metric files behind Tables S1–S4
 figures/           figure and report generators
-docs/              genome list and supporting documentation
-metadata/          taxonomy table consumed by fungidna/data/taxonomy.py
+docs/              genome list, weights manifest, and supporting documentation
 ```
-
-## Installation
-
-```bash
-conda env create -f environment.yml
-conda activate fungidna
-```
-
-`flash-attn` and `mamba-ssm` need a CUDA toolchain matching your PyTorch build;
-if the conda solve is slow, install the pinned pip wheels from
-`requirements.txt` into a bare Python 3.10 + PyTorch 2.5.1 + CUDA 12.1 env
-instead.
 
 ## Data
 
@@ -78,67 +159,28 @@ their phylum, subphylum, class, order and family. One assembly is dropped by
 QC, leaving the 734 genomes reported in the paper.
 
 Download the assemblies and GFF3 annotations from MycoCosm by portal ID, then
-run the scripts in [`data_prep/`](data_prep/).
-
-CD-HIT (Fu et al. 2012) is required for the coding-potential dataset and is not
-vendored here.
+run the scripts in [`data_prep/`](data_prep/). CD-HIT (Fu et al. 2012) is
+required for the coding-potential dataset and is not vendored here.
 
 ## Known limitations
 
-Please read this before opening an issue about something not running.
-
 - **Scripts contain absolute paths from the authors' machine.** Paths rooted at
-  the original working directory appear in 22 of the files here, mostly
-  pointing at dataset and checkpoint locations. They have deliberately not been
+  the original working directory appear in 22 of the files here, mostly pointing
+  at dataset and checkpoint locations. They have deliberately not been
   rewritten, so that the code matches what actually produced the reported
-  numbers. You will need to adjust them for your own layout. Grep for
-  `/home/` to find them.
-- **Model weights are not yet released.** A HuggingFace release is planned;
-  until then the pretrained checkpoint is available on reasonable request.
+  numbers. You will need to adjust them for your own layout. Grep for `/home/`
+  to find them.
 - **Derived datasets are not yet released.** A Zenodo deposit is planned. For
   now, rebuild them from the JGI source with `data_prep/`.
 - **Some scripts retain unreachable exploratory code paths** (DNABERT-2, NT-v2).
   Those models are not paper baselines and have been removed from the CLI
   choices; the surrounding code is left as it was when the reported numbers
   were produced.
-- **Scope.** Only the pretraining and the downstream evaluations reported in the
-  paper are included. Unpublished exploratory work is not in this repository.
 
 ## License
 
 [MIT](LICENSE). Note that the pretrained baselines downloaded by
 `baselines/download.py` carry their own licenses — GENA-LM is CC-BY-NC-SA 4.0.
-
-## Invocation
-
-FungiDNA-FM exposes two equivalent entry points that share one validation gate.
-
-**Embedded API:**
-
-```python
-from fungidna.invoke import run_task
-report = run_task(file_path="/path/test.fasta", task="splice_site")
-print(report.to_json())
-```
-
-**Prompt-driven terminal:**
-
-```bash
-python -m fungidna "Please predict the splice sites using /path/test.fasta"
-```
-
-Supported tasks: `representation`, `taxonomy`, `coding_potential`,
-`splice_site`, `bgc_boundary` (aliases accepted, e.g. "splice site",
-"taxonomic classification").
-
-Weights are loaded per task. Point each task at its checkpoint via
-`~/.config/fungidna/weights.yaml` (a `task: /path/to/checkpoint.pt` mapping) or
-the `FUNGIDNA_<TASK>_WEIGHTS` environment variable. The shared pretrained
-backbone and SentencePiece tokenizer are resolved under the `backbone` and
-`tokenizer` keys (env: `FUNGIDNA_BACKBONE_WEIGHTS` / `FUNGIDNA_TOKENIZER_WEIGHTS`).
-See [`docs/weights_manifest.md`](docs/weights_manifest.md) for the exact files
-to publish. Until weights are registered, requests that pass validation raise
-`WeightsNotFoundError`.
 
 ## Citation
 

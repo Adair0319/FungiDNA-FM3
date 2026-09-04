@@ -1,0 +1,15 @@
+# FungiDNA-FM model weights configuration.
+#
+# Copy this file to ~/.config/fungidna/weights.yaml and fill in the paths
+# after downloading the weights from Hugging Face (see README "Model weights").
+#
+#   cp configs/weights.example.yaml ~/.config/fungidna/weights.yaml
+#
+# Each value is an absolute path to the corresponding checkpoint.
+
+backbone: /path/to/backbone_final.pt
+tokenizer: /path/to/tokenizer/bpe_fungi.model
+coding_potential: /path/to/coding_potential/best_model.pt
+splice_site: /path/to/splice_site/best_model.pt
+taxonomy: /path/to/taxonomy/phylum/mlp_best.pt
+bgc_boundary: /path/to/bgc_boundary/best_model.pt
