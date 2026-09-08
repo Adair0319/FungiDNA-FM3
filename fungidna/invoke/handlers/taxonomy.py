@@ -57,6 +57,7 @@ class TaxonomyHandler(TaskHandler):
         backbone = StripedMambaBackbone(config)
         load_checkpoint(backbone, backbone_ckpt, unwrap=None)
         backbone.eval()
+        device = next(backbone.parameters()).device
 
         head = _TaxonomyHead(num_classes=_DEFAULT_NUM_CLASSES)
         load_checkpoint(head, head_ckpt, unwrap=None)  # bare state dict, keys "net.*"
@@ -70,9 +71,10 @@ class TaxonomyHandler(TaskHandler):
                     window = seq[start:start + _WINDOW_BP]
                     if not window:
                         continue
-                    ids = torch.tensor([tok.encode_bpe(window, add_cls=True)], dtype=torch.long)
-                    pooled = backbone(ids).mean(dim=1)
-                    logits = head(pooled)
+                    ids = torch.tensor([tok.encode_bpe(window, add_cls=True)], dtype=torch.long, device=device)
+                    with torch.amp.autocast(device_type=device.type, dtype=torch.bfloat16):
+                        pooled = backbone(ids).mean(dim=1)
+                    logits = head(pooled.float())  # MLP head is fp32
                     votes.append(int(logits.argmax(dim=1).item()))
                 labels[header] = max(range(_DEFAULT_NUM_CLASSES), key=votes.count) if votes else None
         return Report(task=request.task, file_path=request.file_path, status="ok",

@@ -26,11 +26,12 @@ class RepresentationHandler(TaskHandler):
         model = StripedMambaBackbone(FungiDNAConfig())
         load_checkpoint(model, ckpt, unwrap=None)
         model.eval()
+        device = next(model.parameters()).device
 
         embeddings = {}
-        with torch.no_grad():
+        with torch.no_grad(), torch.amp.autocast(device_type=device.type, dtype=torch.bfloat16):
             for header, seq in read_sequences(request.file_path):
-                ids = torch.tensor([tok.encode_bpe(seq, add_cls=True)], dtype=torch.long)
+                ids = torch.tensor([tok.encode_bpe(seq, add_cls=True)], dtype=torch.long, device=device)
                 hidden = model(ids)
                 embeddings[header] = hidden.mean(dim=1).squeeze(0).float().tolist()
         return Report(task=request.task, file_path=request.file_path, status="ok",

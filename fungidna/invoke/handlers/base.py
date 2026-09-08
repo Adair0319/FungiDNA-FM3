@@ -89,13 +89,19 @@ def _checkpoint_dtype(state_dict):
     return torch.float32
 
 
-def load_checkpoint(model, ckpt_path, unwrap="model"):
+def default_device():
+    """The inference device: CUDA when available (required by mamba/flash-attn)."""
+    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def load_checkpoint(model, ckpt_path, unwrap="model", device=None):
     """Load a checkpoint into ``model`` with loud failure on key mismatch.
 
     ``unwrap`` names a top-level dict key to extract (e.g. ``"model"``); pass
-    ``unwrap=None`` for a bare state dict. Returns ``(matched, missing,
-    unexpected)``. Raises ``WeightsNotFoundError`` when the checkpoint is
-    missing, cannot be unwrapped, or no keys match the model.
+    ``unwrap=None`` for a bare state dict. The model is moved to ``device``
+    (default: CUDA if available) and cast to the checkpoint dtype. Returns
+    ``(matched, missing, unexpected)``. Raises ``WeightsNotFoundError`` when the
+    checkpoint is missing, cannot be unwrapped, or no keys match the model.
     """
     ckpt_path = Path(ckpt_path)
     if not ckpt_path.is_file():
@@ -107,7 +113,8 @@ def load_checkpoint(model, ckpt_path, unwrap="model"):
         state = state[unwrap]
 
     dtype = _checkpoint_dtype(state)
-    model = model.to(dtype=dtype)
+    device = device or default_device()
+    model = model.to(dtype=dtype).to(device)
 
     model_keys = set(model.state_dict().keys())
     ckpt_keys = set(state.keys())

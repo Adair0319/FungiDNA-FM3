@@ -25,11 +25,12 @@ class CodingPotentialHandler(TaskHandler):
         model = FungiDNAForSequenceClassification(FungiDNAConfig(), num_classes=2)
         load_checkpoint(model, ckpt, unwrap="model")
         model.eval()
+        device = next(model.parameters()).device
 
         predictions = {}
-        with torch.no_grad():
+        with torch.no_grad(), torch.amp.autocast(device_type=device.type, dtype=torch.bfloat16):
             for header, seq in read_sequences(request.file_path):
-                ids = torch.tensor([tok.encode_bpe(seq, add_cls=True)], dtype=torch.long)
+                ids = torch.tensor([tok.encode_bpe(seq, add_cls=True)], dtype=torch.long, device=device)
                 logits = model(ids)
                 prob = torch.softmax(logits, dim=1)[0, 1].item()  # class 1 = coding
                 predictions[header] = {

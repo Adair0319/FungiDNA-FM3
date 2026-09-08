@@ -25,11 +25,12 @@ class BGCBoundaryHandler(TaskHandler):
         model = FungiDNAForBGCBoundary(FungiDNAConfig(), num_outputs=2)
         load_checkpoint(model, ckpt, unwrap="model")
         model.eval()
+        device = next(model.parameters()).device
 
         boundaries = {}
-        with torch.no_grad():
+        with torch.no_grad(), torch.amp.autocast(device_type=device.type, dtype=torch.bfloat16):
             for header, seq in read_sequences(request.file_path):
-                ids = torch.tensor([tok.encode_bpe(seq, add_cls=True)], dtype=torch.long)
+                ids = torch.tensor([tok.encode_bpe(seq, add_cls=True)], dtype=torch.long, device=device)
                 out = model(ids)
                 left_bp, right_bp = (float(v) for v in out[0])
                 boundaries[header] = {"left_bp": left_bp, "right_bp": right_bp}
