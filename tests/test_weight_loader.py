@@ -54,15 +54,15 @@ class TestWeightLoader(unittest.TestCase):
         # FUNGIDNA_WEIGHTS_CONFIG points at a file that does not exist.
         wl = WeightLoader({})
         with self.assertRaises(WeightsNotFoundError):
-            wl.resolve("coding_potential")
+            wl.resolve("cds")
 
     def test_malformed_yaml_raises_with_message(self):
         self.config_path.write_text("taxonomy: [1, 2\n")
         wl = WeightLoader({})
         with self.assertRaises(WeightsNotFoundError) as cm:
-            wl.resolve("coding_potential")
+            wl.resolve("cds")
         self.assertIn("unreadable", str(cm.exception))
-        self.assertEqual(cm.exception.task, "coding_potential")
+        self.assertEqual(cm.exception.task, "cds")
 
 
 if __name__ == "__main__":

@@ -244,39 +244,42 @@ class FungiDNAForJointTraining(nn.Module):
 # ═══════════════════════════════════════════════════
 
 class FungiDNAForSequenceClassification(nn.Module):
-    """Downstream: [CLS]-token classification (Tasks 1, 3, 4)."""
-    def __init__(self, config: FungiDNAConfig, num_classes: int):
+    """Downstream: sequence classification (CDS / short-CDS)."""
+    def __init__(self, config: FungiDNAConfig, num_classes: int, token_type: int = 0):
         super().__init__()
         self.config = config
+        self.token_type = token_type
         self.backbone = StripedMambaBackbone(config)
         self.head = ClassificationHead(config.hidden_size, num_classes)
 
     def forward(self, input_ids: torch.Tensor) -> torch.Tensor:
-        hidden = self.backbone(input_ids, token_type=0)
+        hidden = self.backbone(input_ids, token_type=self.token_type)
         return self.head(hidden)
 
 
 class FungiDNAForSpliceSite(nn.Module):
-    """Downstream: dual binary classification for donor and acceptor (Task 2)."""
-    def __init__(self, config: FungiDNAConfig):
+    """Downstream: splice-site classification."""
+    def __init__(self, config: FungiDNAConfig, num_classes: int = 3, token_type: int = 0):
         super().__init__()
         self.config = config
+        self.token_type = token_type
         self.backbone = StripedMambaBackbone(config)
-        self.head = DualBinaryHead(config.hidden_size)
+        self.head = ClassificationHead(config.hidden_size, num_classes)
 
-    def forward(self, input_ids: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        hidden = self.backbone(input_ids, token_type=0)
+    def forward(self, input_ids: torch.Tensor) -> torch.Tensor:
+        hidden = self.backbone(input_ids, token_type=self.token_type)
         return self.head(hidden)
 
 
 class FungiDNAForBGCBoundary(nn.Module):
     """Downstream: BGC boundary distance regression (2 outputs: left/right distance)."""
-    def __init__(self, config: FungiDNAConfig, num_outputs: int = 2):
+    def __init__(self, config: FungiDNAConfig, num_outputs: int = 2, token_type: int = 0):
         super().__init__()
         self.config = config
+        self.token_type = token_type
         self.backbone = StripedMambaBackbone(config)
         self.head = MeanPoolHead(config.hidden_size, num_outputs)
 
     def forward(self, input_ids: torch.Tensor) -> torch.Tensor:
-        hidden = self.backbone(input_ids, token_type=0)
+        hidden = self.backbone(input_ids, token_type=self.token_type)
         return self.head(hidden)

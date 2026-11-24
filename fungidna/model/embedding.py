@@ -1,3 +1,4 @@
+# Portions of this file are adapted from genomic-jamba (https://github.com/suzuki-2001/genomic-jamba), Copyright (c) 2025 Shosuke Suzuki, released under the MIT License. See THIRD_PARTY_NOTICES.md for the full license text.
 """Dual-token embedding with RoPE for FungiDNA."""
 import torch
 import torch.nn as nn
@@ -7,16 +8,22 @@ from fungidna.model.config import FungiDNAConfig
 class RotaryPositionEmbedding(nn.Module):
     """RoPE — shared between Mamba2 and Attention layers."""
 
-    def __init__(self, dim: int, theta: float = 10000.0, max_seq_len: int = 131072):
+    def __init__(self, dim: int, theta: float = 10000.0, max_seq_len: int = 131072, min_seq_len: int = 1):
         super().__init__()
         self.dim = dim
         self.theta = theta
         self.max_seq_len = max_seq_len
+        #: Lower bound on the number of position rows generated. The backbone's
+        #: attention applies RoPE with the per-head index (head 0..n_heads-1), so
+        #: the position table must always have at least ``num_attention_heads``
+        #: rows, even for inputs shorter than that. This does NOT change results
+        #: for inputs >= ``min_seq_len`` (the first ``n_heads`` rows are unchanged).
+        self.min_seq_len = min_seq_len
         inv_freq = 1.0 / (theta ** (torch.arange(0, dim, 2, dtype=torch.float32) / dim))
         self.register_buffer("inv_freq", inv_freq, persistent=False)
 
     def forward(self, seq_len: int, device: torch.device) -> tuple[torch.Tensor, torch.Tensor]:
-        t = torch.arange(seq_len, device=device, dtype=torch.float32)
+        t = torch.arange(max(seq_len, self.min_seq_len), device=device, dtype=torch.float32)
         freqs = torch.outer(t, self.inv_freq)
         cos = freqs.cos().to(dtype=torch.bfloat16)
         sin = freqs.sin().to(dtype=torch.bfloat16)
@@ -48,7 +55,8 @@ class DualTokenEmbedding(nn.Module):
         self.layer_norm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
         self.dropout = nn.Dropout(config.dropout)
         self.rope = RotaryPositionEmbedding(
-            config.hidden_size, config.rope_theta, config.max_position_embeddings
+            config.hidden_size, config.rope_theta, config.max_position_embeddings,
+            min_seq_len=config.num_attention_heads,
         )
 
     def forward(self, input_ids: torch.Tensor, token_type: int = 0, add_cls: bool = True):

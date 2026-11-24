@@ -7,9 +7,10 @@ from .tasks import CANONICAL_TASKS
 
 
 class Task(str, enum.Enum):
-    REPRESENTATION = "representation"
+    EMBEDDING = "embedding"
     TAXONOMY = "taxonomy"
-    CODING_POTENTIAL = "coding_potential"
+    CDS = "cds"
+    SHORT_CDS = "short_cds"
     SPLICE_SITE = "splice_site"
     BGC_BOUNDARY = "bgc_boundary"
 
@@ -24,3 +25,5 @@ def task_from_string(name):
 class StructuredRequest:
     task: Task
     file_path: Path
+    variant: str = "unigram"  # "unigram" or "snt"
+    rank: str = "phylum"      # taxonomy rank (phylum/subphylum/class/order/family)

@@ -51,7 +51,7 @@ from splice_site_dataset import (
 # Logging
 # ---------------------------------------------------------------------------
 
-LOG_DIR = "/home/lty/yy_projects/fungi_project/fungi_dna_model/logs"
+LOG_DIR = "logs"
 os.makedirs(LOG_DIR, exist_ok=True)
 
 logging.basicConfig(
@@ -722,22 +722,19 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--assembly_dir",
-        default="/home/lty/yy_projects/fungi_project/1kfg_datasets/assembly_genome",
+        default="",
     )
     parser.add_argument(
         "--gff_dir",
-        default="/home/lty/yy_projects/fungi_project/1kfg_datasets/gff3",
+        default="",
     )
     parser.add_argument(
         "--transcript_dir",
-        default="/home/lty/yy_projects/fungi_project/1kfg_datasets/transcript",
+        default="",
     )
     parser.add_argument(
         "--output_dir",
-        default=(
-            "/home/lty/yy_projects/fungi_project/"
-            "fungi_dna_model/data/downstream/task2_splice_site_v2"
-        ),
+        default="data/downstream/task2_splice_site_v2",
     )
     parser.add_argument("--seed", type=int, default=42)
 

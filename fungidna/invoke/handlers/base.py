@@ -36,9 +36,14 @@ class WeightLoader:
     def __init__(self, registry=None):
         self.registry = dict(registry or {})
 
-    def resolve(self, task):
-        """Resolve the checkpoint path for ``task`` (registry → env → YAML)."""
-        return self._resolve_key(task)
+    def resolve(self, task, rank=None):
+        """Resolve the checkpoint path for ``task`` (registry → env → YAML).
+
+        ``rank``, when given, resolves a per-rank key ``f"{task}_{rank}"``
+        (used by the taxonomy task's per-rank MLP heads).
+        """
+        key = task if rank is None else f"{task}_{rank}"
+        return self._resolve_key(key)
 
     def resolve_backbone(self):
         """Resolve the shared pretrained backbone (registry → env → YAML)."""
@@ -94,14 +99,25 @@ def default_device():
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def load_checkpoint(model, ckpt_path, unwrap="model", device=None):
-    """Load a checkpoint into ``model`` with loud failure on key mismatch.
+def load_checkpoint(model, ckpt_path, unwrap="model", device=None, skip_size_mismatch=()):
+    """Load a checkpoint into ``model`` with explicit shape checking.
 
     ``unwrap`` names a top-level dict key to extract (e.g. ``"model"``); pass
     ``unwrap=None`` for a bare state dict. The model is moved to ``device``
-    (default: CUDA if available) and cast to the checkpoint dtype. Returns
-    ``(matched, missing, unexpected)``. Raises ``WeightsNotFoundError`` when the
-    checkpoint is missing, cannot be unwrapped, or no keys match the model.
+    (default: CUDA if available) and cast to the checkpoint dtype.
+
+    Shape-mismatch policy (never silently skipped):
+
+    * keys whose shape matches are loaded;
+    * keys whose shape mismatches AND whose name contains one of the
+      ``skip_size_mismatch`` substrings are skipped, with a printed explanation
+      (used for the Unigram variant's unused single-nucleotide embedding, which
+      is ``(5, 768)`` in the Unigram checkpoint but ``(10, 768)`` in the shared
+      architecture — the Unigram variant never reads ``nt_embed`` because it uses
+      ``token_type=0`` / the 4096-vocab Unigram embedding);
+    * any *other* shape mismatch raises :class:`WeightsNotFoundError`.
+
+    Returns ``(loaded, skipped, missing, unexpected)``.
     """
     ckpt_path = Path(ckpt_path)
     if not ckpt_path.is_file():
@@ -111,24 +127,52 @@ def load_checkpoint(model, ckpt_path, unwrap="model", device=None):
     state = torch.load(ckpt_path, map_location="cpu", weights_only=True)
     if unwrap is not None and isinstance(state, dict) and unwrap in state and isinstance(state[unwrap], dict):
         state = state[unwrap]
+    if not isinstance(state, dict) or not any(isinstance(v, torch.Tensor) for v in state.values()):
+        raise WeightsNotFoundError(
+            str(ckpt_path), f"checkpoint has no tensor state dict: {ckpt_path}"
+        )
 
     dtype = _checkpoint_dtype(state)
     device = device or default_device()
     model = model.to(dtype=dtype).to(device)
 
-    model_keys = set(model.state_dict().keys())
-    ckpt_keys = set(state.keys())
-    matched = model_keys & ckpt_keys
-    if not matched:
+    model_sd = model.state_dict()
+    filtered = {}
+    loaded = 0
+    skipped = []
+    for key, val in state.items():
+        if key not in model_sd:
+            continue  # reported as ``unexpected`` below
+        if model_sd[key].shape == val.shape:
+            filtered[key] = val
+            loaded += 1
+        elif any(sub in key for sub in skip_size_mismatch):
+            skipped.append((key, tuple(val.shape), tuple(model_sd[key].shape)))
+        else:
+            raise WeightsNotFoundError(
+                str(ckpt_path),
+                f"shape mismatch for {key!r}: checkpoint {tuple(val.shape)} "
+                f"vs model {tuple(model_sd[key].shape)}",
+            )
+
+    if loaded == 0:
         raise WeightsNotFoundError(
             str(ckpt_path),
             f"no checkpoint keys match the model for {ckpt_path}; "
-            f"checkpoint has {len(ckpt_keys)} keys, model expects {len(model_keys)}. "
-            f"Sample ckpt keys: {sorted(ckpt_keys)[:5]}",
+            f"checkpoint has {len(state)} keys, model expects {len(model_sd)}.",
         )
 
-    missing, unexpected = model.load_state_dict(state, strict=False)
-    return len(matched), missing, unexpected
+    missing, unexpected = model.load_state_dict(filtered, strict=False)
+    if skipped:
+        print(
+            f"[load_checkpoint] {ckpt_path.name}: skipped {len(skipped)} "
+            f"size-mismatched key(s) (explicitly allowed): {skipped}"
+        )
+    print(
+        f"[load_checkpoint] {ckpt_path.name}: loaded {loaded}/{len(model_sd)} "
+        f"model params; missing={len(missing)} unexpected={len(unexpected)}"
+    )
+    return loaded, skipped, missing, unexpected
 
 
 class TaskHandler:

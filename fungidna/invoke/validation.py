@@ -20,7 +20,7 @@ def validate(task_raw, file_path_raw):
         raise ValidationError(
             "TASK_UNSUPPORTED",
             f"unsupported or missing task: {task_raw!r}; "
-            f"supported: representation, taxonomy, coding_potential, splice_site, bgc_boundary",
+            f"supported: embedding, taxonomy, cds, short_cds, splice_site, bgc_boundary",
         )
     if file_path_raw is None or str(file_path_raw).strip() == "":
         raise ValidationError("MISSING_FILE_PATH", "no file path provided")

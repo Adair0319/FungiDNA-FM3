@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-SRC_BASE="/home/lty/yy_projects/fungi_project/1kfg_datasets/annotation_filtered"
-DST_DIR="/home/lty/yy_projects/fungi_project/1kfg_datasets/gff3"
+SRC_BASE="${1:?source base dir required}"
+DST_DIR="${2:-gff3}"
 GENES_SUBPATH="Filtered_Models___best__/Genes"
 
 mkdir -p "$DST_DIR"

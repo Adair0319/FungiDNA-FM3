@@ -2,14 +2,19 @@
 Streaming combine: write final parquets using PyArrow ParquetWriter.
 Memory-efficient: processes one species at a time.
 """
-import os, random
+import os, random, argparse
 import pandas as pd
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-TEMP_DIR = "/home/lty/yy_projects/fungi_project/fungi_dna_model/data/downstream/task2_splice_site/_temp_species"
-OUT_DIR = "/home/lty/yy_projects/fungi_project/fungi_dna_model/data/downstream/task2_splice_site"
+_ap = argparse.ArgumentParser()
+_ap.add_argument("--temp-dir", default="data/downstream/task2_splice_site/_temp_species")
+_ap.add_argument("--out-dir", default="data/downstream/task2_splice_site")
+_args = _ap.parse_args()
+
+TEMP_DIR = _args.temp_dir
+OUT_DIR = _args.out_dir
 SEED = 42
 LABEL_NONSITE = 2
 

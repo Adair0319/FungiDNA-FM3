@@ -2,9 +2,8 @@
 
 Each candidate is a GT/GC (donor) or AG (acceptor) dinucleotide. The model
 classifies the surrounding ±200 bp window into 3 classes (0 donor, 1 acceptor,
-2 non-site). The checkpoint uses the ``UnifiedHead`` over mean-pooled non-CLS
-tokens (see ``run_splice_v2_experiments.py``), so this handler reproduces that
-pooling exactly.
+2 non-site). The checkpoint uses a LayerNorm→Linear→GELU→Dropout→Linear head over
+mean-pooled non-CLS tokens, so this handler reproduces that pooling exactly.
 """
 import torch
 import torch.nn as nn
@@ -20,7 +19,7 @@ _NUM_CLASSES = 3             # donor / acceptor / non-site
 
 
 class _UnifiedHead(nn.Module):
-    """LayerNorm → Linear → GELU → Dropout → Linear (matches run_splice_v2_experiments.py)."""
+    """LayerNorm → Linear → GELU → Dropout → Linear (matches the trained checkpoint)."""
 
     def __init__(self, input_dim, num_classes=_NUM_CLASSES, hidden_dim=256, dropout=0.1):
         super().__init__()
@@ -43,6 +42,8 @@ class SpliceSiteHandler(TaskHandler):
         self.loader = loader or WeightLoader()
 
     def run(self, request):
+        variant = getattr(request, "variant", "unigram")
+        token_type, is_snt = (1, True) if variant == "snt" else (0, False)
         ckpt = self.loader.resolve(self.task.value)
         tokenizer_path = self.loader.resolve_tokenizer()
 
@@ -51,13 +52,15 @@ class SpliceSiteHandler(TaskHandler):
         from fungidna.data.tokenizer import DualTokenizer
 
         tok = DualTokenizer(str(tokenizer_path))
-        model = FungiDNAForSequenceClassification(FungiDNAConfig(), num_classes=_NUM_CLASSES)
+        model = FungiDNAForSequenceClassification(FungiDNAConfig(), num_classes=_NUM_CLASSES,
+                                                  token_type=token_type)
         # Reproduce the training-time head replacement + mean-pool forward.
         model.head = _UnifiedHead(FungiDNAConfig().hidden_size)
-        load_checkpoint(model, ckpt, unwrap="model")
+        skip = () if is_snt else ("nt_embed",)
+        load_checkpoint(model, ckpt, unwrap="model", skip_size_mismatch=skip)
 
         def forward_meanpool(input_ids):
-            hidden = model.backbone(input_ids, token_type=0)
+            hidden = model.backbone(input_ids, token_type=token_type)
             pooled = hidden[:, 1:, :].mean(dim=1)  # mean over non-CLS tokens
             return model.head(pooled)
 
@@ -75,8 +78,12 @@ class SpliceSiteHandler(TaskHandler):
                     if motif not in _SPLICE_MOTIFS:
                         continue
                     window = seq[max(0, i - _WINDOW_HALF): i + _WINDOW_HALF + 1]
-                    ids = torch.tensor([tok.encode_bpe(window, add_cls=True)], dtype=torch.long, device=device)
-                    logits = model(ids)
+                    if is_snt:
+                        ids = tok.encode_single_nt(window, add_cls=False)
+                    else:
+                        ids = tok.encode_bpe(window, add_cls=True)
+                    x = torch.tensor([ids], dtype=torch.long, device=device)
+                    logits = model(x)
                     probs = torch.softmax(logits, dim=1)[0]
                     cls = int(probs.argmax(dim=0).item())
                     hits.append({"pos": i, "motif": motif, "class": cls,

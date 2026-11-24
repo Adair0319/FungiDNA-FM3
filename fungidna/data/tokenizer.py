@@ -14,8 +14,8 @@ UNK_ID = 3
 SEP_ID = 4
 
 # Single-nucleotide mapping
-NT_TO_ID = {"A": 0, "C": 1, "G": 2, "T": 3, "N": 4}
-ID_TO_NT = {0: "A", 1: "C", 2: "G", 3: "T", 4: "N"}
+NT_TO_ID = {"A": 5, "C": 6, "G": 7, "T": 8, "N": 9}
+ID_TO_NT = {5: "A", 6: "C", 7: "G", 8: "T", 9: "N"}
 
 
 def train_bpe(
@@ -97,7 +97,7 @@ class DualTokenizer:
 
     def encode_single_nt(self, sequence: str, add_cls: bool = False) -> list[int]:
         """Single-nucleotide encode. Returns token id list."""
-        ids = [NT_TO_ID.get(c, 4) for c in sequence.upper()]
+        ids = [NT_TO_ID.get(c, 9) for c in sequence.upper()]
         if add_cls:
             return [CLS_ID] + ids
         return ids
@@ -112,4 +112,4 @@ class DualTokenizer:
     @staticmethod
     def single_nt_to_tensor(sequence: str) -> torch.Tensor:
         """Convert DNA string directly to long tensor (single-nt encoding)."""
-        return torch.tensor([NT_TO_ID.get(c, 4) for c in sequence.upper()], dtype=torch.long)
+        return torch.tensor([NT_TO_ID.get(c, 9) for c in sequence.upper()], dtype=torch.long)

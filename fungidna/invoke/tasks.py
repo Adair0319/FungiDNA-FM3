@@ -5,34 +5,41 @@ imports from here; do not duplicate the list elsewhere.
 """
 
 CANONICAL_TASKS = (
-    "representation",
+    "embedding",
     "taxonomy",
-    "coding_potential",
+    "cds",
+    "short_cds",
     "splice_site",
     "bgc_boundary",
 )
 
 _TASK_ALIASES = {
-    # representation
-    "representation": "representation",
-    "representations": "representation",
-    "embedding": "representation",
-    "embeddings": "representation",
+    # embedding (formerly "representation")
+    "embedding": "embedding",
+    "embeddings": "embedding",
+    "representation": "embedding",
+    "representations": "embedding",
     # taxonomy
     "taxonomy": "taxonomy",
     "taxonomic classification": "taxonomy",
     "classification": "taxonomy",
-    # coding potential
-    "coding_potential": "coding_potential",
-    "coding potential": "coding_potential",
-    "coding-potential": "coding_potential",
-    # splice site
+    # cds (formerly "coding_potential", long CDS 300-5000 bp)
+    "cds": "cds",
+    "coding_potential": "cds",
+    "coding potential": "cds",
+    "coding-potential": "cds",
+    # short_cds (<= 300 bp)
+    "short_cds": "short_cds",
+    "short cds": "short_cds",
+    "short-cds": "short_cds",
+    "sorf": "short_cds",
+    # splice_site
     "splice_site": "splice_site",
     "splice site": "splice_site",
     "splice sites": "splice_site",
     "splice-site": "splice_site",
     "splice": "splice_site",
-    # bgc boundary
+    # bgc_boundary
     "bgc_boundary": "bgc_boundary",
     "bgc boundary": "bgc_boundary",
     "BGC boundary": "bgc_boundary",

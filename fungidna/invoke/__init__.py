@@ -27,9 +27,10 @@ from .validation import ValidationError, validate
 # registered with the dispatcher at import time without importing their modules
 # (and therefore without importing torch).
 _HANDLER_FACTORIES = {
-    Task.REPRESENTATION: ("fungidna.invoke.handlers.representation", "RepresentationHandler"),
+    Task.EMBEDDING: ("fungidna.invoke.handlers.embedding", "EmbeddingHandler"),
     Task.TAXONOMY: ("fungidna.invoke.handlers.taxonomy", "TaxonomyHandler"),
-    Task.CODING_POTENTIAL: ("fungidna.invoke.handlers.coding_potential", "CodingPotentialHandler"),
+    Task.CDS: ("fungidna.invoke.handlers.cds", "CdsHandler"),
+    Task.SHORT_CDS: ("fungidna.invoke.handlers.short_cds", "ShortCdsHandler"),
     Task.SPLICE_SITE: ("fungidna.invoke.handlers.splice_site", "SpliceSiteHandler"),
     Task.BGC_BOUNDARY: ("fungidna.invoke.handlers.bgc_boundary", "BGCBoundaryHandler"),
 }
@@ -60,8 +61,10 @@ for _task, (_module, _attr) in _HANDLER_FACTORIES.items():
     register(_task, _LazyHandler(_module, _attr))
 
 
-def run_task(file_path, task):
+def run_task(file_path, task, variant="unigram", rank="phylum"):
+    import dataclasses
     req = validate(task, file_path)
+    req = dataclasses.replace(req, variant=variant, rank=rank)
     return dispatch(req)
 
 

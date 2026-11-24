@@ -1,3 +1,4 @@
+# Portions of this file are adapted from genomic-jamba (https://github.com/suzuki-2001/genomic-jamba), Copyright (c) 2025 Shosuke Suzuki, released under the MIT License. See THIRD_PARTY_NOTICES.md for the full license text.
 """StripedMamba backbone: 3×Mamba2 → 1×Attention, repeated 6 times (24 layers total)."""
 import torch
 import torch.nn as nn

@@ -1,3 +1,4 @@
+# Portions of this file are adapted from genomic-jamba (https://github.com/suzuki-2001/genomic-jamba), Copyright (c) 2025 Shosuke Suzuki, released under the MIT License. See THIRD_PARTY_NOTICES.md for the full license text.
 """Self-attention block: RMSNorm → FlashAttention-2 (RoPE) → residual → RMSNorm → SwiGLU MLP → residual.
 
 Gradient checkpointing applied to both attention and MLP sub-blocks to

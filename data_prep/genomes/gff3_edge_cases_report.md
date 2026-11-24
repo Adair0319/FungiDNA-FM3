@@ -1,7 +1,7 @@
 # GFF3 文件边缘情况审阅报告
 
 **日期**: 2026-06-09
-**源目录**: `/home/lty/yy_projects/fungi_project/1kfg_datasets/annotation_filtered`
+**源目录**: `1kfg_datasets/annotation_filtered`
 **物种目录总数**: 737
 
 ---

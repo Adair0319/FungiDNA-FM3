@@ -1,3 +1,4 @@
+# Portions of this file are adapted from genomic-jamba (https://github.com/suzuki-2001/genomic-jamba), Copyright (c) 2025 Shosuke Suzuki, released under the MIT License. See THIRD_PARTY_NOTICES.md for the full license text.
 """FungiDNA model configuration."""
 from dataclasses import dataclass, field
 
@@ -6,7 +7,7 @@ from dataclasses import dataclass, field
 class FungiDNAConfig:
     # ── Embedding ──
     bpe_vocab_size: int = 4096
-    nt_vocab_size: int = 5
+    nt_vocab_size: int = 10
     hidden_size: int = 768
     max_position_embeddings: int = 131072
 

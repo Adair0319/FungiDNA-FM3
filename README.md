@@ -4,12 +4,23 @@ A genomic foundation model pretrained on diverse fungal whole genomes.
 
 FungiDNA-FM (113 M parameters) is a hybrid **Mamba2 + self-attention** backbone
 trained on 39.48 Gb from 734 fungal genomes spanning six phyla. It produces
-representations that transfer to five downstream tasks: representation
-clustering, taxonomic classification, coding-potential prediction, splice-site
-classification, and biosynthetic-gene-cluster (BGC) boundary regression.
+embeddings that transfer to five downstream tasks: taxonomy
+classification, CDS/intergenic discrimination, short-CDS discrimination,
+splice-site classification, and biosynthetic-gene-cluster (BGC) boundary
+regression — plus an embedding extraction capability.
 
 Companion repository for the paper *"FungiDNA: a genomic foundation model
 pretrained on diverse fungal whole genomes."*
+
+## Variants
+
+FungiDNA-FM is released as two variants that share the same StripedMamba
+backbone:
+
+| Variant | Tokenizer |
+|---|---|
+| **FungiDNA-FM-SNT** | single-nucleotide (A/C/G/T/N) |
+| **FungiDNA-FM-Unigram** | SentencePiece Unigram, vocab 4,096 |
 
 ## Model at a glance
 
@@ -19,8 +30,9 @@ pretrained on diverse fungal whole genomes."*
 | Parameters | ~113 M, hidden dim 768 |
 | Mamba2 layers | state dim 128, conv width 4, expansion 2 (inner dim 1,536) |
 | Attention layers | 12 heads × 64 dims, FlashAttention-2, SwiGLU (intermediate 2,048) |
-| Normalisation | RMSNorm throughout, dropout 0, RoPE (base 10,000, up to 131,072 positions) |
-| Tokenizer | SentencePiece **Unigram**, vocab 4,096, ≈ 3 bp per token |
+| Normalisation | RMSNorm throughout, dropout 0 |
+| Tokenizer | SentencePiece **Unigram**, vocab 4,096, ≈ **5.6 bp/token** |
+| Mask token | SentencePiece Unigram mask id = **2** |
 | Pooling | mean over non-padding positions (not `[CLS]`) |
 | Pretraining corpus | 734 fungal genomes, **39.48 Gb**, six phyla (JGI MycoCosm *1000 Fungal Genomes*) |
 | Pretraining | Phase 1 MLM (1,024 / 2,048 / 4,096 bp) → Phase 2 MLM + supervised contrastive (8,192 bp) |
@@ -28,28 +40,14 @@ pretrained on diverse fungal whole genomes."*
 ## Model weights
 
 The pretrained backbone and downstream-task checkpoints are hosted on the
-Hugging Face Hub:
+Hugging Face Hub. The two variants' final Phase-2 checkpoints are:
 
-**https://huggingface.co/Adair0319/FungiDNA-FM**
+- **FungiDNA-FM-SNT**: 33,000 training steps.
+- **FungiDNA-FM-Unigram**: final training step not yet confirmed (see
+  `docs/weights_manifest.md`; do not cite a specific step until verified).
 
-The repository contains:
-
-```
-Adair0319/FungiDNA-FM
-├── backbone_final.pt                    # pretrained backbone
-├── tokenizer/{bpe_fungi.model, .vocab}  # SentencePiece tokenizer
-├── coding_potential/best_model.pt
-├── splice_site/best_model.pt
-├── taxonomy/{phylum,subphylum,class,order,family}/mlp_best.pt
-└── bgc_boundary/best_model.pt
-```
-
-(If your Hugging Face username differs, adjust the URL accordingly. See
-[`docs/weights_manifest.md`](docs/weights_manifest.md) for the exact files and
-their sizes.)
-
-Download the files (e.g. via `git lfs` / `huggingface-cli download` / the Hub
-web UI) to a local directory, then tell the handlers where they live with a
+Download the files (e.g. via `huggingface-cli download` or the Hub web UI) to a
+local directory, then tell the handlers where they live with a
 `~/.config/fungidna/weights.yaml` config:
 
 ```bash
@@ -57,20 +55,6 @@ mkdir -p ~/.config/fungidna
 cp configs/weights.example.yaml ~/.config/fungidna/weights.yaml
 # edit the paths to point at your downloaded files
 ```
-
-```yaml
-# ~/.config/fungidna/weights.yaml
-backbone: /path/to/backbone_final.pt
-tokenizer: /path/to/tokenizer/bpe_fungi.model
-coding_potential: /path/to/coding_potential/best_model.pt
-splice_site: /path/to/splice_site/best_model.pt
-taxonomy: /path/to/taxonomy/phylum/mlp_best.pt
-bgc_boundary: /path/to/bgc_boundary/best_model.pt
-```
-
-The same paths can be given via environment variables
-(`FUNGIDNA_BACKBONE_WEIGHTS`, `FUNGIDNA_TOKENIZER_WEIGHTS`, and
-`FUNGIDNA_<TASK>_WEIGHTS`).
 
 ## Installation
 
@@ -93,9 +77,18 @@ FungiDNA-FM exposes two equivalent entry points that share one validation gate.
 ```python
 from fungidna.invoke import run_task
 
-report = run_task(file_path="/path/test.fasta", task="coding_potential")
+report = run_task(file_path="/path/test.fasta", task="cds", variant="unigram")
 print(report.to_json())
+
+# taxonomy: pick a rank and read both the predicted id and the category name
+tax = run_task(file_path="/path/genome.fasta", task="taxonomy",
+               variant="unigram", rank="subphylum")
+tax.results["labels"]        # {header: predicted class id}
+tax.results["labels_named"]  # {header: predicted category name}
 ```
+
+Set `variant="snt"` for the single-nucleotide variant. The `variant` selects the
+tokenizer, the `token_type` (0 for Unigram, 1 for SNT), and the matching backbone.
 
 **Prompt-driven terminal:**
 
@@ -111,43 +104,42 @@ model.
 
 | Task | Canonical name | Description |
 |---|---|---|
-| Representation | `representation` | 768-d mean-pooled embeddings per sequence |
-| Taxonomic classification | `taxonomy` | phylum label per sequence (five-rank heads available) |
-| Coding potential | `coding_potential` | coding vs non-coding probability per sequence |
-| Splice site | `splice_site` | donor / acceptor / non-site per candidate motif |
-| BGC boundary | `bgc_boundary` | left/right boundary distance in bp |
+| Embedding | `embedding` | 768-d mean-pooled embeddings per sequence |
+| Taxonomic classification | `taxonomy` | phylum-to-family classification per 10 kb window |
+| CDS / intergenic | `cds` | CDS vs intergenic discrimination (300–5,000 bp) |
+| Short CDS | `short_cds` | short-CDS vs intergenic-ORF discrimination (≤ 300 bp) |
+| Splice site | `splice_site` | donor / acceptor / non-site per 401 bp window |
+| BGC boundary | `bgc_boundary` | left/right boundary distance in bp (10 kb window) |
 
-Aliases are accepted (e.g. `"splice site"`, `"taxonomic classification"`,
-`"embeddings"`) and normalised to the canonical names above.
+Aliases are accepted and normalised to the canonical names above.
+
+> Note: the released `short_cds` and `splice_site` checkpoints are the
+> best-validation checkpoints of **fold 4** (the last of the five folds), not a
+> fold selected as the best-performing across the five-fold benchmark. The
+> paper's reported five-fold mean ± std is a separate result and is not the
+> same as the single released checkpoint's performance.
 
 ## Paper → code
 
-| Paper | Path | What is there |
+The paper uses Supplementary Notes S1–S6; the table maps them to this
+repository.
+
+| Note | Path | What is there |
 |---|---|---|
-| Methods 2.1 — genome data & preprocessing | [`data_prep/genomes/`](data_prep/genomes/) | JGI file organisation, genomic-region extraction, QC (contigs ≥ 5 kb, ≤ 10% N) |
-| Methods 2.2 — DNA tokenizer | [`fungidna/data/tokenizer.py`](fungidna/data/tokenizer.py) | SentencePiece Unigram, vocab 4,096 |
-| Methods 2.3 — model architecture | [`fungidna/model/`](fungidna/model/) | `striped_mamba.py`, `mamba2_block.py`, `attention_block.py`, `embedding.py`, `heads.py` |
-| Methods 2.4 — two-phase pretraining | [`fungidna/training/`](fungidna/training/), [`experiments/00_pretraining/`](experiments/00_pretraining/) | `phase1_mlm.py`, `phase2_joint.py`, `losses.py`, launchers, configs |
-| Methods 2.5 — baselines | [`baselines/`](baselines/) | CNN and Transformer definitions; GENA-LM download |
-| Methods 2.6 · **Fig 2** · Table S1 | [`experiments/01_representation_clustering/`](experiments/01_representation_clustering/) | UMAP + K-means over phylum and genomic-element representations |
-| Methods 2.7 · **Fig 3** · Table S2 | [`experiments/02_taxonomic_classification/`](experiments/02_taxonomic_classification/) | Five-rank classification, five-fold CV and genome-isolated |
-| Methods 2.8 · **Fig 4** · Table S3 | [`experiments/03_coding_potential/`](experiments/03_coding_potential/) | CDS vs intergenic, few-shot, fungal sORFs, human sORFs (CPPred) |
-| Methods 2.9 · **Fig 5** · Table S4 | [`experiments/04_splice_site/`](experiments/04_splice_site/) | Donor / acceptor / non-site, 401-bp windows, GroupKFold |
-| Methods 2.10 — environment | [`environment.yml`](environment.yml), [`requirements.txt`](requirements.txt) | |
-| Figures 2–5 | [`figures/`](figures/) | Report and figure generators |
-| Tables S1–S4 | [`results/`](results/) | Collected metric files for all experiments |
+| S1 — corpus | [`data_prep/`](data_prep/), [`docs/genome_list.tsv`](docs/genome_list.tsv) | genome acquisition, QC, the exact genome list |
+| S2 — architecture & pretraining | [`fungidna/model/`](fungidna/model/), [`fungidna/training/`](fungidna/training/), [`scripts/`](scripts/), [`configs/`](configs/) | StripedMamba model, Phase 1 / Phase 2 trainers, launchers, configs |
+| S3 — downstream tasks | [`fungidna/invoke/`](fungidna/invoke/) | task handlers and the guarded invocation interface |
+| S4–S6 — evaluation, input/optimisation, masked recovery | [`supplementary/`](supplementary/) | supplementary tables and configuration notes (to be added) |
 
 ## Repository layout
 
 ```
 fungidna/          core library — model, data, training, and the invoke workflow
-data_prep/         raw JGI data → per-task datasets
-experiments/       one directory per paper experiment
-baselines/         baseline model definitions and download helper
+data_prep/         raw JGI data → pretraining corpus
+scripts/           pretraining launchers (train_phase1.sh, train_phase2_joint.sh)
 configs/           pretraining configs and the weights config template
-results/           metric files behind Tables S1–S4
-figures/           figure and report generators
 docs/              genome list, weights manifest, and supporting documentation
+supplementary/     supplementary tables and notes (to be added)
 ```
 
 ## Data
@@ -159,28 +151,21 @@ their phylum, subphylum, class, order and family. One assembly is dropped by
 QC, leaving the 734 genomes reported in the paper.
 
 Download the assemblies and GFF3 annotations from MycoCosm by portal ID, then
-run the scripts in [`data_prep/`](data_prep/). CD-HIT (Fu et al. 2012) is
-required for the coding-potential dataset and is not vendored here.
+run the scripts in [`data_prep/`](data_prep/).
 
 ## Known limitations
 
 - **Scripts contain absolute paths from the authors' machine.** Paths rooted at
-  the original working directory appear in 22 of the files here, mostly pointing
-  at dataset and checkpoint locations. They have deliberately not been
-  rewritten, so that the code matches what actually produced the reported
-  numbers. You will need to adjust them for your own layout. Grep for `/home/`
-  to find them.
-- **Derived datasets are not yet released.** A Zenodo deposit is planned. For
-  now, rebuild them from the JGI source with `data_prep/`.
-- **Some scripts retain unreachable exploratory code paths** (DNABERT-2, NT-v2).
-  Those models are not paper baselines and have been removed from the CLI
-  choices; the surrounding code is left as it was when the reported numbers
-  were produced.
+  the original working directory appear in some files, mostly pointing at
+  dataset and checkpoint locations. They have deliberately not been rewritten,
+  so that the code matches what actually produced the reported numbers. You
+  will need to adjust them for your own layout. Grep for `/home/` to find them.
+- **Derived datasets are not yet released.** A deposit is planned. For now,
+  rebuild them from the JGI source with `data_prep/`.
 
 ## License
 
-[MIT](LICENSE). Note that the pretrained baselines downloaded by
-`baselines/download.py` carry their own licenses — GENA-LM is CC-BY-NC-SA 4.0.
+[MIT](LICENSE).
 
 ## Citation
 

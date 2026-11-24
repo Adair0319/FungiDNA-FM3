@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-SRC_BASE="/home/lty/yy_projects/fungi_project/1kfg_datasets/genomes_unmasked"
-DST_DIR="/home/lty/yy_projects/fungi_project/1kfg_datasets/assembly_genome"
+SRC_BASE="${1:?source base dir required}"
+DST_DIR="${2:-assembly_genome}"
 
 mkdir -p "$DST_DIR"
 
